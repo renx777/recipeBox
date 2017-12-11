@@ -1,3 +1,9 @@
+// Save data to the current local store
+localStorage.setItem("username", ["red", "blue"]);
+
+// Access some stored data
+var b = localStorage.getItem("username");
+
 var Modal = ReactBootstrap.Modal;
 var Accordion = ReactBootstrap.Accordion;
 var Button = ReactBootstrap.Button;
@@ -88,8 +94,11 @@ var AddModal = React.createClass({
 var RecipeBox = React.createClass({
   displayName: "RecipeBox",
   getInitialState: function getInitialState() {
-    return {
-      recipes: [{
+    //  get locally stored recipe values
+    var local_recipes = JSON.parse(localStorage.getItem("recipes"));
+    //     if no recipes set locally,use default values
+    if (local_recipes == "null") {
+      var default_recipes = [{
         name: "Pumpkin Pie",
         ingredients: ["Pumpkin Puree", "Sweetened Condensed Milk", "Eggs", "Pumpkin Pie Spice", "Pie Crust"]
       }, {
@@ -98,7 +107,12 @@ var RecipeBox = React.createClass({
       }, {
         name: "Onion Pie",
         ingredients: ["Onion", "Pie Crust", "Sounds Yummy right?"]
-      }]
+      }];
+      localStorage.setItem("recipes", JSON.stringify(default_recipes));
+    }
+
+    return {
+      recipes: local_recipes
     };
   },
   addRecipe: function addRecipe(x) {
@@ -108,6 +122,9 @@ var RecipeBox = React.createClass({
 
     var newState = this.state.recipes;
     newState.push(recipe);
+    //     update local storage
+    localStorage.setItem("recipes", JSON.stringify(newState));
+    //     update state
     this.setState({
       recipes: newState
     });
@@ -121,17 +138,21 @@ var RecipeBox = React.createClass({
     var editedRecipe = this.state.recipes;
     editedRecipe[i].name = orecipe.name;
     editedRecipe[i].ingredients = orecipe.ingredients;
+    //     update local storage with edited recipes
+    localStorage.setItem("recipes", JSON.stringify(editedRecipe));
     this.setState({
       recipes: editedRecipe
     });
   },
   delete: function _delete(e) {
     var i = e.target.attributes.getNamedItem("data-key").value;
-    var editedRecipe = this.state.recipes;
+    var deletedRecipe = this.state.recipes;
 
-    editedRecipe.splice(i, 1);
+    deletedRecipe.splice(i, 1);
+    //     update local storage with new recipe list after deleteion
+    localStorage.setItem("recipes", JSON.stringify(deletedRecipe));
     this.setState({
-      recipes: editedRecipe
+      recipes: deletedRecipe
     });
   },
   render: function render() {

@@ -1,3 +1,10 @@
+// Save data to the current local store
+localStorage.setItem("username", ["red","blue"]);
+
+// Access some stored data
+var b= localStorage.getItem("username");
+
+
 var Modal = ReactBootstrap.Modal;
 var Accordion = ReactBootstrap.Accordion;
 var Button = ReactBootstrap.Button;
@@ -71,8 +78,11 @@ const AddModal = React.createClass({
 
 const RecipeBox = React.createClass({
   getInitialState() {
-    return {
-      recipes: [
+//  get locally stored recipe values
+    var local_recipes=JSON.parse(localStorage.getItem("recipes"))
+//     if no recipes set locally,use default values
+    if(local_recipes=="null"){
+        var default_recipes=[
         {
           name: "Pumpkin Pie",
           ingredients: [
@@ -92,6 +102,12 @@ const RecipeBox = React.createClass({
           ingredients: ["Onion", "Pie Crust", "Sounds Yummy right?"]
         }
       ]
+    localStorage.setItem("recipes",JSON.stringify(default_recipes) );
+      
+    }
+    
+    return {
+      recipes: local_recipes
     };
   },
 
@@ -104,6 +120,9 @@ const RecipeBox = React.createClass({
 
     const newState = this.state.recipes;
     newState.push(recipe);
+//     update local storage
+     localStorage.setItem("recipes",JSON.stringify(newState) );
+//     update state
     this.setState({
       recipes: newState
     });
@@ -122,6 +141,8 @@ const RecipeBox = React.createClass({
   const editedRecipe=this.state.recipes;
    editedRecipe[i].name=orecipe.name
     editedRecipe[i].ingredients=orecipe.ingredients
+//     update local storage with edited recipes
+    localStorage.setItem("recipes",JSON.stringify(editedRecipe) );
    this.setState({
      recipes:editedRecipe
    }) 
@@ -129,11 +150,13 @@ const RecipeBox = React.createClass({
 
   delete(e){
     const i = e.target.attributes.getNamedItem("data-key").value;
-    const editedRecipe = this.state.recipes;
+    const deletedRecipe = this.state.recipes;
    
-    editedRecipe.splice(i,1)
+    deletedRecipe.splice(i,1)
+//     update local storage with new recipe list after deleteion
+    localStorage.setItem("recipes",JSON.stringify(deletedRecipe) );
     this.setState({
-      recipes: editedRecipe
+      recipes: deletedRecipe
     });
 
   },
