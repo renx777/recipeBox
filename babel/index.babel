@@ -1,0 +1,200 @@
+var Modal = ReactBootstrap.Modal;
+var Accordion = ReactBootstrap.Accordion;
+var Button = ReactBootstrap.Button;
+var Popover = ReactBootstrap.Popover;
+var Tooltip = ReactBootstrap.Tootip;
+var FormGroup = ReactBootstrap.FormGroup;
+var Input = ReactBootstrap.Input;
+var Textarea = ReactBootstrap.TextArea;
+var FormControl = ReactBootstrap.FormControl;
+var ListGroup = ReactBootstrap.ListGroup,
+    ListGroupItem = ReactBootstrap.ListGroupItem;
+var Panel = ReactBootstrap.Panel;
+
+const AddModal = React.createClass({
+  getInitialState() {
+    return { showModal: false };
+  },
+
+  close() {
+    this.setState({ showModal: false });
+  },
+
+  open() {
+    this.setState({ showModal: true });
+  },
+
+  render() {
+    
+
+    return (
+      <div>
+        <Button
+          bsStyle={this.props.bStyle}
+          bsSize={this.props.bSize}
+          onClick={this.open}
+          >
+          {this.props.name}
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>{this.props.title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Input
+              id="name"
+              type="text"
+              label="Recipe"
+              placeholder="Recipe Name"
+               defaultValue={this.props.rvalue}
+              />
+            <Input
+              id="ingri"
+              type="textarea"
+              label="Ingredients"
+              placeholder="Enter Ingredients,Separated,By Commas"
+              defaultValue={this.props.ivalue}
+              />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button id="blue" bsStyle="primary" data-key={this.props.keys} onClick={this.props.onClick}>
+              {this.props.title}
+            </Button>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    );
+  }
+});
+
+const RecipeBox = React.createClass({
+  getInitialState() {
+    return {
+      recipes: [
+        {
+          name: "Pumpkin Pie",
+          ingredients: [
+            "Pumpkin Puree",
+            "Sweetened Condensed Milk",
+            "Eggs",
+            "Pumpkin Pie Spice",
+            "Pie Crust"
+          ]
+        },
+        {
+          name: "Spaghetti",
+          ingredients: ["Noodles", "Tomato Sauce", "(Optional) Meatballs"]
+        },
+        {
+          name: "Onion Pie",
+          ingredients: ["Onion", "Pie Crust", "Sounds Yummy right?"]
+        }
+      ]
+    };
+  },
+
+  addRecipe(x) {
+    const recipe = {};
+    recipe.name = $("#name").val();
+    recipe.ingredients = $("#ingri")
+      .val()
+      .split(",");
+
+    const newState = this.state.recipes;
+    newState.push(recipe);
+    this.setState({
+      recipes: newState
+    });
+  },
+  editRecipe(e){
+    const orecipe = {};
+    orecipe.name = $("#name").val();
+    orecipe.ingredients = $("#ingri")
+      .val()
+      .split(",");
+    
+    
+    
+    
+  const i=e.target.attributes.getNamedItem("data-key").value
+  const editedRecipe=this.state.recipes;
+   editedRecipe[i].name=orecipe.name
+    editedRecipe[i].ingredients=orecipe.ingredients
+   this.setState({
+     recipes:editedRecipe
+   }) 
+  },
+
+  delete(e){
+    const i = e.target.attributes.getNamedItem("data-key").value;
+    const editedRecipe = this.state.recipes;
+   
+    editedRecipe.splice(i,1)
+    this.setState({
+      recipes: editedRecipe
+    });
+
+  },
+  
+  
+  
+  render() {
+    return (
+      <div>
+        
+        <RecipeBars recipes={this.state.recipes} editRecipe={this.editRecipe} delete={this.delete} onClick={this.addRecipe} />
+        <AddModal
+          onClick={this.addRecipe}
+          title="Add a Recipe"
+          name="Add Recipe"
+          bSize="large"
+          bStyle="primary"
+          />
+      </div>
+    );
+  }
+});
+
+const RecipeBars = React.createClass({
+  
+  render() {
+    const recipes = this.props.recipes;
+
+    const bars = recipes.map((recipe, i) => {
+      var igrid = recipe.ingredients.map((val, i) => {
+        return <ListGroupItem>{val}</ListGroupItem>;
+      });
+      var hstyle = { "text-align": "center" };
+      var bstyle = { "margin-right": "5px", float: "right", display: "inline" };
+
+      return (
+        <Panel eventKey={i}   bsStyle="success" collapsible header={recipe.name}>
+          <h4 style={hstyle}>Ingredients</h4>
+          <ListGroup fill>{igrid}</ListGroup>
+          <Button data-key={i} style={bstyle} onClick={this.props.delete} bsSize="small" bsStyle="danger">
+            delete
+          </Button>
+
+          <AddModal
+            title="Edit Recipe"
+            onClick={this.props.editRecipe}
+            keys={i}
+            name="Edit"
+            bSize="small"
+            bStyle="info"
+            rvalue={recipe.name}
+            ivalue={recipe.ingredients.join(',')}
+            />
+        </Panel>
+      );
+    });
+
+    return <div><Accordion onSelect={this.pclick}>{bars}< /Accordion></div>;
+  }
+});
+
+// ReactDOM.render(<AddModal title="Add a Recipe" name="Add Recipe" bSize="large" bStyle="primary"/>,document.getElementById('app'))
+
+ReactDOM.render(<RecipeBox />, document.getElementById("app"));
