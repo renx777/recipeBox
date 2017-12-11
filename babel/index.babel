@@ -79,10 +79,16 @@ const AddModal = React.createClass({
 const RecipeBox = React.createClass({
   getInitialState() {
 //  get locally stored recipe values
+    var local_recipes=localStorage.getItem("recipes");
+//     check if recipes is defined in local storage
+  if(typeof local_recipes !== 'undefined' && local_recipes !== null){
+//     if recipe is stored in local storage
     var local_recipes=JSON.parse(localStorage.getItem("recipes"))
-//     if no recipes set locally,use default values
-    if(local_recipes=="null"){
-        var default_recipes=[
+     
+    }else{
+      
+//       if recipe is not stored in local storage
+      var default_recipes=[
         {
           name: "Pumpkin Pie",
           ingredients: [
@@ -103,8 +109,12 @@ const RecipeBox = React.createClass({
         }
       ]
     localStorage.setItem("recipes",JSON.stringify(default_recipes) );
+      local_recipes=default_recipes
       
     }
+   
+
+    
     
     return {
       recipes: local_recipes
@@ -197,7 +207,7 @@ const RecipeBars = React.createClass({
           <h4 style={hstyle}>Ingredients</h4>
           <ListGroup fill>{igrid}</ListGroup>
           <Button data-key={i} style={bstyle} onClick={this.props.delete} bsSize="small" bsStyle="danger">
-            delete
+            Delete
           </Button>
 
           <AddModal

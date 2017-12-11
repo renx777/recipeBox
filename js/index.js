@@ -14,19 +14,25 @@ var Input = ReactBootstrap.Input;
 var Textarea = ReactBootstrap.TextArea;
 var FormControl = ReactBootstrap.FormControl;
 var ListGroup = ReactBootstrap.ListGroup,
-    ListGroupItem = ReactBootstrap.ListGroupItem;
+  ListGroupItem = ReactBootstrap.ListGroupItem;
 var Panel = ReactBootstrap.Panel;
 
 var AddModal = React.createClass({
   displayName: "AddModal",
   getInitialState: function getInitialState() {
-    return { showModal: false };
+    return {
+      showModal: false
+    };
   },
   close: function close() {
-    this.setState({ showModal: false });
+    this.setState({
+      showModal: false
+    });
   },
   open: function open() {
-    this.setState({ showModal: true });
+    this.setState({
+      showModal: true
+    });
   },
   render: function render() {
 
@@ -34,8 +40,7 @@ var AddModal = React.createClass({
       "div",
       null,
       React.createElement(
-        Button,
-        {
+        Button, {
           bsStyle: this.props.bStyle,
           bsSize: this.props.bSize,
           onClick: this.open
@@ -43,11 +48,14 @@ var AddModal = React.createClass({
         this.props.name
       ),
       React.createElement(
-        Modal,
-        { show: this.state.showModal, onHide: this.close },
+        Modal, {
+          show: this.state.showModal,
+          onHide: this.close
+        },
         React.createElement(
-          Modal.Header,
-          { closeButton: true },
+          Modal.Header, {
+            closeButton: true
+          },
           React.createElement(
             Modal.Title,
             null,
@@ -76,13 +84,18 @@ var AddModal = React.createClass({
           Modal.Footer,
           null,
           React.createElement(
-            Button,
-            { id: "blue", bsStyle: "primary", "data-key": this.props.keys, onClick: this.props.onClick },
+            Button, {
+              id: "blue",
+              bsStyle: "primary",
+              "data-key": this.props.keys,
+              onClick: this.props.onClick
+            },
             this.props.title
           ),
           React.createElement(
-            Button,
-            { onClick: this.close },
+            Button, {
+              onClick: this.close
+            },
             "Close"
           )
         )
@@ -95,9 +108,14 @@ var RecipeBox = React.createClass({
   displayName: "RecipeBox",
   getInitialState: function getInitialState() {
     //  get locally stored recipe values
-    var local_recipes = JSON.parse(localStorage.getItem("recipes"));
-    //     if no recipes set locally,use default values
-    if (local_recipes == "null") {
+    var local_recipes = localStorage.getItem("recipes");
+    //     check if recipes is defined in local storage
+    if (typeof local_recipes !== 'undefined' && local_recipes !== null) {
+      //     if recipe is stored in local storage
+      var local_recipes = JSON.parse(localStorage.getItem("recipes"));
+    } else {
+
+      //       if recipe is not stored in local storage
       var default_recipes = [{
         name: "Pumpkin Pie",
         ingredients: ["Pumpkin Puree", "Sweetened Condensed Milk", "Eggs", "Pumpkin Pie Spice", "Pie Crust"]
@@ -109,6 +127,7 @@ var RecipeBox = React.createClass({
         ingredients: ["Onion", "Pie Crust", "Sounds Yummy right?"]
       }];
       localStorage.setItem("recipes", JSON.stringify(default_recipes));
+      local_recipes = default_recipes;
     }
 
     return {
@@ -159,7 +178,12 @@ var RecipeBox = React.createClass({
     return React.createElement(
       "div",
       null,
-      React.createElement(RecipeBars, { recipes: this.state.recipes, editRecipe: this.editRecipe, "delete": this.delete, onClick: this.addRecipe }),
+      React.createElement(RecipeBars, {
+        recipes: this.state.recipes,
+        editRecipe: this.editRecipe,
+        "delete": this.delete,
+        onClick: this.addRecipe
+      }),
       React.createElement(AddModal, {
         onClick: this.addRecipe,
         title: "Add a Recipe",
@@ -186,25 +210,42 @@ var RecipeBars = React.createClass({
           val
         );
       });
-      var hstyle = { "text-align": "center" };
-      var bstyle = { "margin-right": "5px", float: "right", display: "inline" };
+      var hstyle = {
+        "text-align": "center"
+      };
+      var bstyle = {
+        "margin-right": "5px",
+        float: "right",
+        display: "inline"
+      };
 
       return React.createElement(
-        Panel,
-        { eventKey: i, bsStyle: "success", collapsible: true, header: recipe.name },
+        Panel, {
+          eventKey: i,
+          bsStyle: "success",
+          collapsible: true,
+          header: recipe.name
+        },
         React.createElement(
-          "h4",
-          { style: hstyle },
+          "h4", {
+            style: hstyle
+          },
           "Ingredients"
         ),
         React.createElement(
-          ListGroup,
-          { fill: true },
+          ListGroup, {
+            fill: true
+          },
           igrid
         ),
         React.createElement(
-          Button,
-          { "data-key": i, style: bstyle, onClick: _this.props.delete, bsSize: "small", bsStyle: "danger" },
+          Button, {
+            "data-key": i,
+            style: bstyle,
+            onClick: _this.props.delete,
+            bsSize: "small",
+            bsStyle: "danger"
+          },
           "delete"
         ),
         React.createElement(AddModal, {
@@ -224,8 +265,9 @@ var RecipeBars = React.createClass({
       "div",
       null,
       React.createElement(
-        Accordion,
-        { onSelect: this.pclick },
+        Accordion, {
+          onSelect: this.pclick
+        },
         bars
       )
     );
